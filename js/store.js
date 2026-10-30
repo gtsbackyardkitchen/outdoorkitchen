@@ -9,10 +9,8 @@ const DEF_SET={name:'GTS Backyard Kitchen',logo:'images/logo.png',whatsapp:'+1 (
 const S=()=>{const m={...DEF_SET,...(window.SITE_DATA||{}).settings,...DB.get('settings',{})};['name','logo','whatsapp','email','phone','instagram','currency'].forEach(k=>{if(!m[k])m[k]=DEF_SET[k]});return m};
 const money=n=>{const c=S().currency;return n>0?c+(c.length>1?' ':'')+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'Price on request'};
 const fmt=t=>new Date(t).toLocaleString([], {dateStyle:'medium',timeStyle:'short'});
-const CATS=()=>[...new Set(CATALOG.map(c=>c[2]))];
-const cats=()=>DB.get('cats')||(window.SITE_DATA||{}).cats||CATS();
 /* Starter catalogue comes from js/products.js */
-function seedProducts(){return CATALOG.map(([id,name,category,price,desc,features,layout])=>({id,name,category,price,desc,features,specs:{Material:'Stainless steel',Layout:layout,Included:features.join(', '),Dimensions:'To be confirmed'},imgs:[1,2,3].map(n=>`images/products/${id}-${n}.jpg`),featured:FEATURED.has(id),available:true}))}
+function seedProducts(){return CATALOG.map(([id,name,price,desc,features,finish])=>({id,name,price,desc,features,specs:{Finish:finish,Dimensions:'To be confirmed'},imgs:[`images/products/${id}.jpg`],featured:FEATURED.has(id),available:true}))}
 /* Products: the admin's saved edits win; otherwise site-data.js (published export); otherwise the starter catalogue. */
 const prods=()=>{const L=DB.get('products');if(L)return L;const d=(window.SITE_DATA||{}).products;return d&&d.length?d:seedProducts()};
 const orders=()=>DB.get('orders',[]);
@@ -30,7 +28,7 @@ addEventListener('load',()=>setTimeout(()=>{const p=$('#pre');p&&p.classList.add
 addEventListener('error',e=>{const t=e.target;if(t&&t.tagName==='IMG'&&!t.dataset.f){t.dataset.f=1;if(t.classList.contains('hi'))t.style.display='none';else t.src=ph('Photo coming soon')}},true);
 
 /* Hero slides: edited in Admin > Hero Slides. img = a picture path or an uploaded picture. */
-const HERO_DEF=[['Outdoor kitchens built for the way you live.','Modular stainless steel outdoor kitchens for your backyard.','Shop Now','shop.html'],['Stainless steel, built to last outdoors.','Weather-ready modules you can arrange to fit your space.','View L-Shaped Kitchens','shop.html?q=L-Shape'],['Grill, chill and watch the game.','Kitchens with a BBQ grill, deep freezer and outdoor TV.','See Entertainment Kitchens','shop.html?cat=Entertainment%20Kitchens'],['Want it your way?','Tell us about your space and ideas and we will send you a quote.','Request a Quote','']].map((a,i)=>({h:a[0],p:a[1],b:[a[2],a[3]],img:`images/hero/hero-${i+1}.jpg`}));
+const HERO_DEF=[{"h": "Outdoor kitchens built for the way you live.", "p": "Modular outdoor kitchens with grill, sink and fridge for your backyard.", "b": ["Shop Now", "shop.html"], "img": "images/products/black-u-shape-grill-kitchen.jpg"}, {"h": "Stainless steel, built to last outdoors.", "p": "Grill, sink and drinks fridge together in one stainless kitchen.", "b": ["See All Kitchens", "shop.html"], "img": "images/products/stainless-l-shape-kitchen.jpg"}, {"h": "Grill, chill and watch the game.", "p": "Lift-roof kitchens with a TV, grill and drinks fridge.", "b": ["See Kitchens with TV", "shop.html?q=TV"], "img": "images/products/lift-roof-tv-entertainment-kitchen.jpg"}, {"h": "Want it your way?", "p": "Tell us about your space and ideas and we will send you a quote.", "b": ["Request a Quote", ""], "img": "images/products/white-beach-led-roof-kitchen.jpg"}];
 const getHero=()=>DB.get('hero')||(window.SITE_DATA||{}).hero||HERO_DEF;
-/* one-time clean-up of products saved by older versions */
-(function(){if(DB.get('seedv')===4)return;const p=DB.get('products');if(p){const q=p.filter(x=>!/^k\d+$/.test(x.id)&&!/^p[1-4]$/.test(x.id));q.length?DB.set('products',q):localStorage.removeItem('gts_products')}localStorage.removeItem('gts_cats');DB.set('seedv',4)})();
+/* one-time reset when a new product set is installed (replaces earlier saved products/hero) */
+(function(){if(DB.get('seedv')===5)return;['products','hero','cats'].forEach(k=>localStorage.removeItem('gts_'+k));DB.set('seedv',5)})();
