@@ -22,7 +22,7 @@ $('#foot').innerHTML=`<div class="wrap"><div class="grid"><div><h4>${esc(s.name)
 <div><h4>Follow</h4>${['facebook','instagram','tiktok'].map(k=>s[k]?`<a href="${esc(s[k])}" target="_blank" rel="noopener">${k}</a>`:'').join('')||'<p>Links not set yet</p>'}</div>
 <div><h4>Links</h4><a href="shop.html">Shop</a><a href="track-order.html">Track Order</a><a href="account.html">My Account</a><a href="admin-login.html">Admin</a></div></div><small>© ${new Date().getFullYear()} ${esc(s.name)}. All rights reserved.</small></div>`}
 
-const card=p=>`<div class="card fade"><img src="${p.imgs[0]||ph('No image')}" alt="${esc(p.name)}" loading="lazy"><div class="bd"><span class="tag">${esc(p.category)}</span><h3>${esc(p.name)}</h3>
+const card=p=>`<div class="card fade"><img src="${p.imgs[0]||ph('No image')}" alt="${esc(p.name)}" loading="lazy"><div class="bd"><h3>${esc(p.name)}</h3>
 <p class="muted">${esc((p.desc||'').slice(0,90))}${p.desc?.length>90?'…':''}</p><div class="price">${money(p.price)}</div>
 ${p.available?'':'<span class="badge x">Unavailable</span>'}<div class="ac"><a class="btn o s" href="product.html?id=${p.id}">View Details</a>${p.available?`<button class="btn s" onclick="addCart('${p.id}',1)">Add to Cart</button>`:''}</div></div></div>`;
 
@@ -31,14 +31,14 @@ function addCart(id,q){const c=cart(),i=c.find(x=>x.id===id);i?i.qty+=q:c.push({
 const V={
 home(){const f=prods().filter(p=>p.featured&&p.available);return `<section class="hs" id="hs"><div class="tr">${getHero().map((s,i)=>`<div class="sl">${s.img?`<img class="hi" src="${s.img}" alt="">`:''}<div class="wrap"><h1>${esc(s.h)}</h1><p>${esc(s.p)}</p>${s.b[1]?`<a class="btn" href="${esc(s.b[1])}">${esc(s.b[0])}</a>`:`<button class="btn" onclick="waOpen('Hello, I would like a custom quote for an outdoor kitchen.')">${s.b[0]}</button>`}</div></div>`).join('')}</div><button class="ar l" aria-label="Previous slide">‹</button><button class="ar r" aria-label="Next slide">›</button><div class="dots">${getHero().map(()=>'<i></i>').join('')}</div></section>
 <section><div class="wrap"><h2 class="t">Featured Products</h2><p class="sub">Hand-picked for your backyard.</p><div class="grid">${f.map(card).join('')||'<p class="muted">No featured products yet.</p>'}</div></div></section>
-<section class="alt"><div class="wrap"><h2 class="t">Categories</h2><p class="sub">Find what you need.</p><div class="grid">${cats().map(c=>`<div class="cat" data-c="${esc(c)}" onclick="location.href='shop.html?cat='+encodeURIComponent(this.dataset.c)">${esc(c)}</div>`).join('')}</div></div></section>
+
 <section><div class="wrap"><h2 class="t">Why Choose Us</h2><p class="sub"></p><div class="grid">${[['Made for your space','Ask us about custom requests and sizing.'],['Request a quote','Not sure? Send us your idea on WhatsApp.'],['Order tracking','Follow your order with your Order ID.'],['Direct support','Talk to us directly, any time.']].map(a=>`<div class="box"><h3>${a[0]}</h3><p class="muted">${a[1]}</p></div>`).join('')}</div></div></section>${V.contact()}`},
 contact(){const s=S();return `<section class="alt" id="contact"><div class="wrap"><h2 class="t">Contact Us</h2><p class="sub">We'd love to hear from you.</p><div class="box">${cLines(s)}<br><button class="btn wab" onclick="waOpen('Hello ${esc(s.name)}, I have a question.')">${WAI} Chat on WhatsApp</button></div></div></section>`},
-shop(){return `<section><div class="wrap"><h2 class="t">Shop</h2><div class="tools"><input id="q" placeholder="Search products…" value="${esc(F.q)}"><select id="c"><option value="">All categories</option>${cats().map(c=>`<option ${F.cat===c?'selected':''}>${esc(c)}</option>`).join('')}</select>
+shop(){return `<section><div class="wrap"><h2 class="t">Shop</h2><div class="tools"><input id="q" placeholder="Search products…" value="${esc(F.q)}">
 <select id="so"><option value="">Sort by price</option><option value="a" ${F.sort=='a'?'selected':''}>Low to high</option><option value="d" ${F.sort=='d'?'selected':''}>High to low</option></select></div><div class="grid" id="g"></div></div></section>`},
 product(id){const p=byId(id);if(!p)return '<section><div class="wrap"><h2>Product not found</h2><a class="btn" href="shop.html">Back to shop</a></div></section>';
-return `<section><div class="wrap two"><div class="gal"><img class="main" id="mi" src="${p.imgs[0]||ph('No image')}"><div class="thumbs">${p.imgs.map((s,i)=>`<img src="${s}" class="${i?'':'on'}" onclick="mi.src=this.src;document.querySelectorAll('.thumbs img').forEach(x=>x.classList.remove('on'));this.classList.add('on')">`).join('')}</div></div>
-<div><span class="tag">${esc(p.category)}</span><h1>${esc(p.name)}</h1><p class="price" style="font-size:1.5rem;margin:8px 0">${money(p.price)}</p><p>${esc(p.desc)}</p>
+return `<section><div class="wrap two"><div class="gal"><img class="main" id="mi" src="${p.imgs[0]||ph('No image')}">${p.imgs.length>1?`<div class="thumbs">${p.imgs.map((s,i)=>`<img src="${s}" class="${i?'':'on'}" onclick="mi.src=this.src;document.querySelectorAll('.thumbs img').forEach(x=>x.classList.remove('on'));this.classList.add('on')">`).join('')}</div>`:''}</div>
+<div><h1>${esc(p.name)}</h1><p class="price" style="font-size:1.5rem;margin:8px 0">${money(p.price)}</p><p>${esc(p.desc)}</p>
 ${p.features?.length?`<h3 style="margin-top:16px">Features</h3><ul style="padding-left:20px">${p.features.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`:''}
 ${Object.keys(p.specs||{}).length?`<h3 style="margin-top:16px">Specifications</h3><table>${Object.entries(p.specs).map(([k,v])=>`<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join('')}</table>`:''}
 <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">${p.available?`<div class="qty"><button onclick="q.textContent=Math.max(1,+q.textContent-1)">−</button><span id="q">1</span><button onclick="q.textContent=+q.textContent+1">+</button></div><button class="btn" onclick="addCart('${p.id}',+q.textContent)">Add to Cart</button>`:'<span class="badge x">Currently unavailable</span>'}
@@ -70,9 +70,9 @@ ${sh.location?`<p><b>Latest location:</b> ${esc(sh.location)}</p>`:''}${sh.compa
 function quote(id){waOpen('Hello, I would like a quote for: '+byId(id).name)}
 function chg(id,d){const c=cart(),i=c.find(x=>x.id===id);i.qty=Math.max(1,i.qty+d);saveCart(c);route()}
 function rm(id){saveCart(cart().filter(x=>x.id!==id));route()}
-function drawGrid(){const g=$('#g');if(!g)return;let l=prods().filter(p=>(!F.cat||p.category===F.cat)&&(p.name+p.desc).toLowerCase().includes(F.q.toLowerCase()));
+function drawGrid(){const g=$('#g');if(!g)return;let l=prods().filter(p=>(p.name+p.desc).toLowerCase().includes(F.q.toLowerCase()));
 if(F.sort)l.sort((a,b)=>F.sort=='a'?a.price-b.price:b.price-a.price);g.innerHTML=l.map(card).join('')||'<p class="muted">No products match your search.</p>'}
-function bindShop(){$('#q').oninput=e=>{F.q=e.target.value;drawGrid()};$('#c').onchange=e=>{F.cat=e.target.value;drawGrid()};$('#so').onchange=e=>{F.sort=e.target.value;drawGrid()};$('#g').innerHTML=Array(8).fill('<div class="sk"></div>').join('');setTimeout(drawGrid,400)}
+function bindShop(){$('#q').oninput=e=>{F.q=e.target.value;drawGrid()};$('#so').onchange=e=>{F.sort=e.target.value;drawGrid()};$('#g').innerHTML=Array(8).fill('<div class="sk"></div>').join('');setTimeout(drawGrid,400)}
 function bindCheckout(){const f=$('#f');if(!f)return;f.onsubmit=e=>{e.preventDefault();const d=Object.fromEntries(new FormData(f)),er={};
 ['name','phone','country','city','address'].forEach(k=>{if(!d[k].trim())er[k]='Required'});if(!/^\S+@\S+\.\S+$/.test(d.email))er.email='Enter a valid email';else if(!d.email)er.email='Required';
 if(d.phone&&d.phone.replace(/\D/g,'').length<6)er.phone='Enter a valid phone number';
@@ -84,7 +84,7 @@ DB.set('orders',[...orders(),o]);saveCart([]);
 const msg=`Hello, I'd like to submit an ORDER ENQUIRY (not a payment).\nOrder ID: ${id}\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nLocation: ${d.city}, ${d.country}\nAddress: ${d.address}\n\nItems:\n${items.map(i=>`- ${i.qty} x ${i.name} (${money(i.price)})`).join('\n')}\nTotal: ${total>0?money(total):'Price on request'}\nNotes: ${d.notes||'None'}`;
 window._m=msg;$('#app').innerHTML=`<section><div class="wrap" style="max-width:640px"><div class="box"><h2>Enquiry submitted ✔</h2><p>Your Order ID is <b>${id}</b>. Save it to track your order.</p><div class="notice">This is an enquiry only - no payment has been taken. The store will confirm details with you.</div><button class="btn" onclick="waOpen(window._m)">Send enquiry on WhatsApp</button> <a class="btn o" href="track-order.html?id=${id}">Track this order</a></div></div></section>`;waOpen(msg);pre(700)}}
 function route(){const pg=document.body.dataset.page,P=new URLSearchParams(location.search);let h;
-if(pg==='product')h=V.product(P.get('id'));else if(pg==='track')h=V.track(P.get('id')||'');else if(pg==='shop'){F.q=P.get('q')||'';F.cat=P.get('cat')||'';h=V.shop()}else h=(V[pg==='contact'?'contactpage':pg]||V.home)();
+if(pg==='product')h=V.product(P.get('id'));else if(pg==='track')h=V.track(P.get('id')||'');else if(pg==='shop'){F.q=P.get('q')||'';h=V.shop()}else h=(V[pg==='contact'?'contactpage':pg]||V.home)();
 $('#app').innerHTML=h;window.scrollTo(0,0);if(pg==='home')initHero();if(pg==='shop')bindShop();if(pg==='checkout')bindCheckout();if(pg==='contact')bindContact();
 if(pg==='track'){$('#oid').onkeydown=e=>e.key==='Enter'&&e.target.nextElementSibling.click();const id=P.get('id');if(id){$('#tr').innerHTML='<p class="muted"><span class="spin"></span> Looking up your order…</p>';setTimeout(()=>{$('#tr').innerHTML=trackView(id)},500)}}}
 $('#wa').onclick=()=>waOpen('Hello '+S().name+', I have a question.');
