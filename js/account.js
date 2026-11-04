@@ -1,4 +1,3 @@
-/* Account page (FRONTEND DEMO: accounts live in this browser only, they are not real secure accounts). */
 (function(){const el=$('#acc');if(!el)return;
 const view=()=>{renderNav();const u=curUser();u?profile(u):auth('login')};
 function auth(mode){const L=mode=='login';

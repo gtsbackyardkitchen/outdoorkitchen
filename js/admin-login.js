@@ -1,4 +1,3 @@
-/* Admin login page. FRONTEND DEMONSTRATION ONLY - not real security (see banner). */
 const R=document.getElementById('app');
 if(sessionStorage.getItem('gts_admin'))location.href='admin-dashboard.html';
 const has=DB.get('adminhash');
